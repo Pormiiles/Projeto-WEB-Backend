@@ -1,9 +1,8 @@
 package com.example.user.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.user.exceptions.user.AuthenticationException;
+import com.example.user.exceptions.user.UserIdNotFoundException;
 import com.example.user.models.LoginDTO;
 import com.example.user.models.User;
 import com.example.user.models.UserDTO;
-import com.example.user.repositories.UserRepository;
+import com.example.user.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,58 +25,51 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable int id) {
-        Optional<User> user = userRepository.findById(id);
-
-        if (user.isPresent()) 
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        try {
+            User user = userService.getUserById(id);
+ 
             return ResponseEntity.ok(user);
-        else 
+        } catch(UserIdNotFoundException ex) {
             return ResponseEntity.notFound().build();
+        } 
     }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> allUsers = userRepository.findAll();
+        List<User> allUsers = userService.getAllUsers();
     
         return ResponseEntity.ok(allUsers);
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDTO data) {
-        Optional<User> userOptional = userRepository.findByEmail(data.email());
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if(BCrypt.checkpw(data.password(), user.getPassword()))
-                return ResponseEntity.ok("Login efetuado com sucesso");
-            else
-                return ResponseEntity.status(401).body("Senha incorreta");
-        } else
-            return ResponseEntity.status(401).body("Usuário não encontrado");
+        try {
+            userService.login(data);
+            return ResponseEntity.ok("Login efetuado com sucesso");
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody UserDTO data) {
-        User newUser = new User();
-        newUser.setNome(data.nome());
-        newUser.setIdade(data.idade());
-        newUser.setEmail(data.email());
-        newUser.setPassword(BCrypt.hashpw(data.password(), BCrypt.gensalt()));
-        userRepository.save(newUser);
+    public ResponseEntity<User> createUser(@RequestBody UserDTO data) {
+        User newUser = userService.createUser(data);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        Optional<User> user = userRepository.findById(id);
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
+        boolean deleted = userService.deleteUser(id);
 
-        if (user.isPresent()) {
-            userRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+        if(deleted) {
+            return ResponseEntity.ok("Usuário de Id: " + id + " foi deletado com sucesso!");
         } else
             return ResponseEntity.notFound().build();
     }
