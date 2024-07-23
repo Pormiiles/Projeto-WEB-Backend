@@ -31,8 +31,7 @@ public class User {
 
     private String password;
 
-    public User(UserDTO data) {
-        this.id = data.id();
+    public User(UserCreateDTO data) {
         this.nome = data.nome();
         this.idade = data.idade();
     }
