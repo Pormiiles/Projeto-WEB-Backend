@@ -53,12 +53,8 @@ public class UserService {
         if(userOptional.isPresent())
             throw new UserEmailAlreadyExistsException("Erro! Já existe um usuário com o mesmo email cadastrado");
 
-        User newUser = new User();
-        newUser.setNome(data.nome());
-        newUser.setIdade(data.idade());
-        newUser.setEmail(data.email());
-        newUser.setPassword(BCrypt.hashpw(data.password(), BCrypt.gensalt()));
-
+        User newUser = User.fromDTOWithEncryptedPassword(data);
+        
         return userRepository.save(newUser);
     }
 
