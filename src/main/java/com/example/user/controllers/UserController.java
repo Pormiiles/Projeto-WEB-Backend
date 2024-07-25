@@ -20,6 +20,7 @@ import com.example.user.models.UserCreateDTO;
 import com.example.user.models.UserGetResponseDTO;
 import com.example.user.services.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserGetResponseDTO createUser(@RequestBody UserCreateDTO data) {
+    public UserGetResponseDTO createUser(@RequestBody @Valid UserCreateDTO data) {
         User newUser = userService.createUser(data);
 
         return userMapper.userToUserGetResponseDTO(newUser);

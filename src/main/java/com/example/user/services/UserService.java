@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.user.exceptions.user.AuthenticationException;
 import com.example.user.exceptions.user.NoUsersToListException;
@@ -15,6 +16,7 @@ import com.example.user.models.User;
 import com.example.user.models.UserCreateDTO;
 import com.example.user.repositories.UserRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,7 +50,8 @@ public class UserService {
         return userOptional;
     }
 
-    public User createUser(UserCreateDTO data) {
+    @Transactional
+    public User createUser(@Valid UserCreateDTO data) {
         Optional<User> userOptional = userRepository.findByEmail(data.email());
         if(userOptional.isPresent())
             throw new UserEmailAlreadyExistsException("Erro! Já existe um usuário com o mesmo email cadastrado");
