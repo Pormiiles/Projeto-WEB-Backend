@@ -3,6 +3,7 @@ package com.example.user.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,11 @@ public class UserController {
         List<User> allUsers = userService.getAllUsers();
     
         return allUsers.stream().map(userMapper::userToUserGetResponseDTO).collect(Collectors.toList());
+    }
+
+    @GetMapping("/pages")
+    public List<User> listUsers(Pageable pageable) {
+        return userService.listUsers(pageable).getContent();
     }
 
     @PostMapping("/login")
