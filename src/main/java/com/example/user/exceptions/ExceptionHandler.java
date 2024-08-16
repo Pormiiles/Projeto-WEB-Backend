@@ -16,51 +16,68 @@ import com.example.user.exceptions.user.UserEmailAlreadyExistsException;
 import com.example.user.exceptions.user.UserIdNotFoundException;
 import com.example.user.exceptions.user.ValidationExceptionDetails;
 
+// Anotação @ControllerAdvice indica que esta classe fornecerá tratamento global de exceções para todos os controladores.
 @ControllerAdvice
 public class ExceptionHandler {
+
+    // Método para tratar exceções do tipo AuthenticationException.
+    // Mapeado usando @ExceptionHandler para capturar exceções de autenticação.
     @org.springframework.web.bind.annotation.ExceptionHandler(AuthenticationException.class)
     private ResponseEntity<String> authenticationHandler(AuthenticationException exception) {
+        // Retorna uma resposta HTTP 404 (Not Found) com a mensagem da exceção.
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
+    // Método para tratar exceções do tipo UserEmailAlreadyExistsException.
     @org.springframework.web.bind.annotation.ExceptionHandler(UserEmailAlreadyExistsException.class)
     private ResponseEntity<String> userEmailAlreadyExistsHandler(UserEmailAlreadyExistsException exception) {
+        // Retorna uma resposta HTTP 409 (Conflict) com a mensagem da exceção.
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 
+    // Método para tratar exceções do tipo NoUsersToListException.
     @org.springframework.web.bind.annotation.ExceptionHandler(NoUsersToListException.class)
     private ResponseEntity<String> noUsersToListHandler(NoUsersToListException exception) {
+        // Retorna uma resposta HTTP 204 (No Content) com a mensagem da exceção.
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(exception.getMessage());
     }
 
+    // Método para tratar exceções do tipo UserIdNotFoundException.
     @org.springframework.web.bind.annotation.ExceptionHandler(UserIdNotFoundException.class)
     private ResponseEntity<String> userIdNotFoundHandler(UserIdNotFoundException exception) {
+        // Retorna uma resposta HTTP 404 (Not Found) com a mensagem da exceção.
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
+    // Método para tratar exceções do tipo MethodArgumentNotValidException.
+    // Este tipo de exceção ocorre quando a validação de argumentos de método falha.
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ValidationExceptionDetails> handleMethodArgumentNotValid(MethodArgumentNotValidException methodArgumentNotValidException) {
+        // Extrai os erros de campo da exceção.
         List<FieldError> fieldErrors = methodArgumentNotValidException.getBindingResult().getFieldErrors();
         
+        // Mapeia os nomes dos campos com erro para uma lista.
         List<String> fields = fieldErrors.stream()
                 .map(FieldError::getField)
                 .collect(Collectors.toList());
         
+        // Mapeia as mensagens de erro correspondentes aos campos para outra lista.
         List<String> fieldMessages = fieldErrors.stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.toList());
 
+        // Usa o Builder da classe ValidationExceptionDetails para construir um objeto detalhado da exceção.
         ValidationExceptionDetails validationExceptionDetails = ValidationExceptionDetails.builder()
-                .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .title("Bad Request Exception, campos invalidos")
-                .detail("Erro ao validar campos enviados")
-                .developerMessage(methodArgumentNotValidException.getClass().getName())
-                .fields(fields)
-                .fieldMessages(fieldMessages)
-                .build();
+                .timestamp(LocalDateTime.now()) // Define o timestamp atual.
+                .status(HttpStatus.BAD_REQUEST.value()) // Define o status HTTP 400 (Bad Request).
+                .title("Bad Request Exception, campos invalidos") // Define o título da exceção.
+                .detail("Erro ao validar campos enviados") // Define uma mensagem detalhada sobre a exceção.
+                .developerMessage(methodArgumentNotValidException.getClass().getName()) // Mensagem para desenvolvedores com o nome da classe de exceção.
+                .fields(fields) // Adiciona a lista de campos com erro.
+                .fieldMessages(fieldMessages) // Adiciona a lista de mensagens de erro.
+                .build(); // Constrói o objeto ValidationExceptionDetails.
 
+        // Retorna uma resposta HTTP 400 com o corpo contendo os detalhes da exceção.
         return new ResponseEntity<>(validationExceptionDetails, HttpStatus.BAD_REQUEST);
     }
 }
-

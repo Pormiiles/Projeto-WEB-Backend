@@ -18,7 +18,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+// Esta é a entidade modelo de User
 public class User {
+    // Atributos da classe
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -31,6 +33,7 @@ public class User {
 
     private String password;
 
+    // Construtor para inicializar os dados vindos do DTO (create user)
     public User(UserCreateDTO data) {
         this.nome = data.nome();
         this.idade = data.idade();
@@ -38,6 +41,7 @@ public class User {
         setPassword(data.password());
     }
 
+    // Cria um novo usuário com todos os seu dados e senha criptografada
     public static User fromDTOWithEncryptedPassword(UserCreateDTO data) {
         User user = new User(data);
         user.setPassword(BCrypt.hashpw(data.password(), BCrypt.gensalt()));

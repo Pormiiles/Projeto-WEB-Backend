@@ -24,55 +24,56 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+// Essa é o Service da aplicação (contém as regras de negócio e principais validações da aplicação)
 public class UserService {
     private final UserRepository userRepository;
     private final UserPagesRepository userPagesRepository;
 
-    public User getUserById(int id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserIdNotFoundException("Usuário de Id: " + id + " não foi encontrado!"));
+    public User findById(int id) { // Obter o usuário pelo Id dele
+        return userRepository.findById(id).orElseThrow(() -> new UserIdNotFoundException("Usuário de Id: " + id + " não foi encontrado!")); // Busca no repositório, se não encontrar, retorna uma exception customizada
     }
 
-    public List<User> getAllUsers() {
-        List<User> allUsers = userRepository.findAll();
+    public List<User> findAll() { // Obter todos os usuários 
+        List<User> allUsers = userRepository.findAll(); // Busca no repositório todos os usuários existentes/cadastrados
 
         if(allUsers.isEmpty())
-            throw new NoUsersToListException("Não há usuários para listar!");
+            throw new NoUsersToListException("Não há usuários para listar!"); // Se não houver nenhum usuário, retorna uma exception
 
         return allUsers;
     }
 
-    public Page<User> listUsers(Pageable pageable) {
-        return userPagesRepository.findAll(pageable);
+    public Page<User> listUsers(Pageable pageable) { // Método de paginação de dados
+        return userPagesRepository.findAll(pageable); 
     }
 
-    public Optional<User> login(LoginDTO data) throws AuthenticationException {
-        Optional<User> userOptional = userRepository.findByEmail(data.email());
+    public Optional<User> login(LoginDTO data) throws AuthenticationException { // Fazer login de usuário
+        Optional<User> userOptional = userRepository.findByEmail(data.email()); // Verifica se o usuário existe pelo e-mail
 
-        if(userOptional.isPresent()) {
-            User user = userOptional.get();
-            if(!BCrypt.checkpw(data.password(), user.getPassword())) 
+        if(userOptional.isPresent()) { // Validação do optional
+            User user = userOptional.get(); // Atribui o optional a uma instância de usuário
+            if(!BCrypt.checkpw(data.password(), user.getPassword())) // Valida a senha
                 throw new AuthenticationException("Senha incorreta");
         } else
-            throw new AuthenticationException("Usuário não encontrado");
+            throw new AuthenticationException("Usuário não encontrado"); // Retorna exception caso o usuário não exista
 
         return userOptional;
     }
 
     @Transactional
-    public User createUser(@Valid UserCreateDTO data) {
-        Optional<User> userOptional = userRepository.findByEmail(data.email());
+    public User save(@Valid UserCreateDTO data) { // Criação/Registro de usuário
+        Optional<User> userOptional = userRepository.findByEmail(data.email()); // Verifica se o usuário existe pelo e-mail
         if(userOptional.isPresent())
-            throw new UserEmailAlreadyExistsException("Erro! Já existe um usuário com o mesmo email cadastrado");
+            throw new UserEmailAlreadyExistsException("Erro! Já existe um usuário com o mesmo email cadastrado"); // Se já existir um usuário cadastrado com o mesmo e-mail, retorna um exception
 
-        User newUser = User.fromDTOWithEncryptedPassword(data);
+        User newUser = User.fromDTOWithEncryptedPassword(data); // Cadastra todos os dados do usuário + senha criptografa
         
         return userRepository.save(newUser);
     }
 
-    public boolean deleteUser(int id) {
-        User user = getUserById(id);
+    public boolean delete(int id) {
+        User user = findById(id); // Verifica se o usuário existe pelo seu Id
 
-        userRepository.delete(user);
+        userRepository.delete(user); // Deleta da base de dados
 
         return true;
     }
