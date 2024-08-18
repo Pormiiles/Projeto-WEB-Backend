@@ -3,6 +3,7 @@ package com.example.user.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -52,10 +53,11 @@ public class UserController {
         return allUsers.stream().map(userMapper::userToUserGetResponseDTO).collect(Collectors.toList());
     }
 
-    // Mapeia a requisição GET para listar usuários com paginação.
     @GetMapping("/pages")
-    public List<User> listUsers(Pageable pageable) {
-        return userService.listUsers(pageable).getContent(); // Chama o serviço para listar usuários com suporte à paginação e retorna a lista.
+    public List<UserGetResponseDTO> listUsers(Pageable pageable) {
+        Page<User> users = userService.listUsers(pageable);
+        
+        return users.map(userMapper::userToUserGetResponseDTO).getContent();
     }
 
     // Mapeia a requisição POST para o endpoint de login.
