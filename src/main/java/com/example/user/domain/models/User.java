@@ -1,4 +1,4 @@
-package com.example.user.models;
+package com.example.user.domain.models;
 
 import org.mindrot.jbcrypt.BCrypt;
 

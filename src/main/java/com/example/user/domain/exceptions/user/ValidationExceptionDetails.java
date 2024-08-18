@@ -1,4 +1,4 @@
-package com.example.user.exceptions.user;
+package com.example.user.domain.exceptions.user;
 
 import java.time.LocalDateTime;
 import java.util.List;

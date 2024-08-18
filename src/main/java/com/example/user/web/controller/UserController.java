@@ -1,4 +1,4 @@
-package com.example.user.controllers;
+package com.example.user.web.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.user.exceptions.user.AuthenticationException;
-import com.example.user.mappers.UserMapper;
-import com.example.user.models.LoginDTO;
-import com.example.user.models.User;
-import com.example.user.models.UserCreateDTO;
-import com.example.user.models.UserGetResponseDTO;
-import com.example.user.services.UserService;
+import com.example.user.domain.exceptions.user.AuthenticationException;
+import com.example.user.domain.models.LoginDTO;
+import com.example.user.domain.models.User;
+import com.example.user.domain.models.UserCreateDTO;
+import com.example.user.domain.models.UserGetResponseDTO;
+import com.example.user.domain.services.UserService;
+import com.example.user.infrastructure.mappers.UserMapper;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class UserController {
 
     // Mapeia a requisição GET para obter uma lista de todos os usuários.
     @GetMapping
-    public List<UserGetResponseDTO> findUsers() {
+    public List<UserGetResponseDTO> findAll() {
         List<User> allUsers = userService.findAll(); // Chama o serviço para buscar todos os usuários.
         
         // Mapeia cada User para um UserGetResponseDTO e retorna a lista.

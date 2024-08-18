@@ -1,4 +1,4 @@
-package com.example.user.exceptions.user;
+package com.example.user.domain.exceptions.user;
 
 // Exception para caso não haja nenhum usuário para retornar
 public class NoUsersToListException extends RuntimeException {

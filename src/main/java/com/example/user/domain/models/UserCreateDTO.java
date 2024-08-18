@@ -1,4 +1,4 @@
-package com.example.user.models;
+package com.example.user.domain.models;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;

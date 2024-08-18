@@ -1,10 +1,10 @@
-package com.example.user.mappers;
+package com.example.user.infrastructure.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-import com.example.user.models.User;
-import com.example.user.models.UserGetResponseDTO;
+import com.example.user.domain.models.User;
+import com.example.user.domain.models.UserGetResponseDTO;
 
 // Anotação que indica que esta interface é um mapper, utilizado para mapear objetos de um tipo para outro.
 @Mapper

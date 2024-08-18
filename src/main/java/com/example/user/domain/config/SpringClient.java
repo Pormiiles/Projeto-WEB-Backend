@@ -1,4 +1,4 @@
-package com.example.user.config;
+package com.example.user.domain.config;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.example.user.models.LoginDTO;
-import com.example.user.models.User;
-import com.example.user.models.UserCreateDTO;
+import com.example.user.domain.models.LoginDTO;
+import com.example.user.domain.models.User;
+import com.example.user.domain.models.UserCreateDTO;
 
 import reactor.core.publisher.Mono;
 

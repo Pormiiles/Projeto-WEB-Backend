@@ -1,11 +1,11 @@
-package com.example.user.repositories;
+package com.example.user.domain.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.user.models.User;
+import com.example.user.domain.models.User;
 
 @Repository
 // Este é o repositório da entidade User

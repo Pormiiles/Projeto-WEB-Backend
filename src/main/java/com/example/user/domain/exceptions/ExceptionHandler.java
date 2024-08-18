@@ -1,4 +1,4 @@
-package com.example.user.exceptions;
+package com.example.user.domain.exceptions;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,15 +10,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-import com.example.user.exceptions.user.AuthenticationException;
-import com.example.user.exceptions.user.NoUsersToListException;
-import com.example.user.exceptions.user.UserEmailAlreadyExistsException;
-import com.example.user.exceptions.user.UserIdNotFoundException;
-import com.example.user.exceptions.user.ValidationExceptionDetails;
+import com.example.user.domain.exceptions.user.AuthenticationException;
+import com.example.user.domain.exceptions.user.NoUsersToListException;
+import com.example.user.domain.exceptions.user.UserEmailAlreadyExistsException;
+import com.example.user.domain.exceptions.user.UserIdNotFoundException;
+import com.example.user.domain.exceptions.user.ValidationExceptionDetails;
+import com.example.user.infrastructure.exception.GlobalExceptionHandler;
 
 // Anotação @ControllerAdvice indica que esta classe fornecerá tratamento global de exceções para todos os controladores.
 @ControllerAdvice
-public class ExceptionHandler {
+public class ExceptionHandler extends GlobalExceptionHandler {
+    // Métodos de exceção específicos para User
 
     // Método para tratar exceções do tipo AuthenticationException.
     // Mapeado usando @ExceptionHandler para capturar exceções de autenticação.
@@ -79,5 +81,17 @@ public class ExceptionHandler {
 
         // Retorna uma resposta HTTP 400 com o corpo contendo os detalhes da exceção.
         return new ResponseEntity<>(validationExceptionDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override // Sobrescrevendo método da superclasse
+    @org.springframework.web.bind.annotation.ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @Override // Sobrescrevendo método da superclasse
+    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage());
     }
 }

@@ -1,4 +1,4 @@
-package com.example.user.services;
+package com.example.user.domain.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,15 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.user.exceptions.user.AuthenticationException;
-import com.example.user.exceptions.user.NoUsersToListException;
-import com.example.user.exceptions.user.UserEmailAlreadyExistsException;
-import com.example.user.exceptions.user.UserIdNotFoundException;
-import com.example.user.models.LoginDTO;
-import com.example.user.models.User;
-import com.example.user.models.UserCreateDTO;
-import com.example.user.repositories.UserPagesRepository;
-import com.example.user.repositories.UserRepository;
+import com.example.user.domain.exceptions.user.AuthenticationException;
+import com.example.user.domain.exceptions.user.NoUsersToListException;
+import com.example.user.domain.exceptions.user.UserEmailAlreadyExistsException;
+import com.example.user.domain.exceptions.user.UserIdNotFoundException;
+import com.example.user.domain.models.LoginDTO;
+import com.example.user.domain.models.User;
+import com.example.user.domain.models.UserCreateDTO;
+import com.example.user.domain.repositories.UserPagesRepository;
+import com.example.user.domain.repositories.UserRepository;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
